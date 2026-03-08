@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SAHANUBHUTI – A warm, safe space where your emotions are heard and valued. AI emotional support companion." />
+  <title>SAHANUBHUTI – I'm here with you. You're not alone.</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23d4956a' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./css/index.css" />
+  <link rel="stylesheet" href="./css/nav.css" />
+  <link rel="stylesheet" href="./css/footer.css" />
+</head>
+
+<body>
+
+  <!-- ════════════════════════════
+       NAVBAR
+       ════════════════════════════ -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+
+    <a href="index.html" class="navbar__brand" aria-label="Sahanubhuti Home">
+      <div class="navbar__logo-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                   2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                   C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                   c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </div>
+      <div class="navbar__brand-text">
+        <span class="navbar__brand-name">SAHANUBHUTI</span>
+        <span class="navbar__brand-tagline">"I'm here with you. You're not alone."</span>
+      </div>
+    </a>
+
+    <ul class="navbar__nav">
+      <li class="navbar__nav-item active">
+        <a href="./index.html" aria-current="page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Home</span>
+        </a>
+      </li>
+      <li class="navbar__nav-item">
+        <a href="./html/chat.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>Chat</span>
+        </a>
+      </li>
+      <li class="navbar__nav-item">
+        <a href="./html/mood.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+            <polyline points="17 6 23 6 23 12"/>
+          </svg>
+          <span>Mood Tracker</span>
+        </a>
+      </li>
+      <li class="navbar__nav-item">
+        <a href="./html/journal.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+          <span>Journal</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- Auth Buttons -->
+    <div class="navbar__auth">
+      <button class="btn-login" id="openLogin" aria-label="Log in to your account">Log In</button>
+      <button class="btn-signup" id="openSignup" aria-label="Create a new account">Sign Up</button>
+    </div>
+
+  </nav>
+
+
+  <!-- ════════════════════════════
+       MAIN
+       ════════════════════════════ -->
+  <main>
+
+    <!-- ── HERO ── -->
+    <section class="hero" aria-labelledby="hero-title">
+
+      <!-- Background blobs -->
+      <div class="hero__blob hero__blob--1" aria-hidden="true"></div>
+      <div class="hero__blob hero__blob--2" aria-hidden="true"></div>
+      <div class="hero__blob hero__blob--3" aria-hidden="true"></div>
+
+      <div class="hero__content">
+
+        <!-- Heart -->
+        <div class="hero__heart" aria-hidden="true">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                     2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                     C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                     c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span class="sparkle">✨</span>
+        </div>
+
+        <!-- Heading -->
+        <h1 class="hero__heading" id="hero-title">
+          Welcome to
+          <span class="brand-name">SAHANUBHUTI</span>
+        </h1>
+
+        <!-- Description -->
+        <p class="hero__sub">
+          A warm, safe space where your emotions are heard and valued.
+        </p>
+
+        <!-- Italic quote -->
+        <p class="hero__quote">
+          "I'm here with you. You're not alone." <span aria-hidden="true">🌸</span>
+        </p>
+
+        <!-- Feature pills -->
+        <div class="hero__pills" role="list" aria-label="App features">
+          <div class="pill" role="listitem">
+            <span aria-hidden="true">💬</span>
+            Compassionate Chat
+          </div>
+          <div class="pill" role="listitem">
+            <span aria-hidden="true">📊</span>
+            Mood Tracking
+          </div>
+          <div class="pill" role="listitem">
+            <span aria-hidden="true">📝</span>
+            Gentle Journaling
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="hero__cta-group">
+          <a href="./html/chat.html" class="btn-start">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            Start a Conversation
+          </a>
+          <p class="hero__cta-hint" aria-label="No signup required. Completely private. Always free.">
+            <span>No signup required</span>
+            <span>Completely private</span>
+            <span>Always free</span>
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Scroll cue -->
+      <div class="hero__scroll-cue" aria-hidden="true">
+        <span>scroll</span>
+        <div class="scroll-bar"></div>
+      </div>
+
+    </section>
+
+
+    <!-- ── FEATURES ── -->
+    <section class="features" aria-label="App features overview">
+      <div class="features__grid">
+
+        <article class="feature-card reveal">
+          <span class="feature-card__icon" aria-hidden="true">💬</span>
+          <h3 class="feature-card__title">Talk Freely</h3>
+          <p class="feature-card__desc">
+            Share your thoughts with a compassionate AI companion who listens without judgment.
+          </p>
+        </article>
+
+        <article class="feature-card reveal">
+          <span class="feature-card__icon" aria-hidden="true">🌈</span>
+          <h3 class="feature-card__title">Track Your Moods</h3>
+          <p class="feature-card__desc">
+            Understand your emotional patterns with gentle, visual mood tracking.
+          </p>
+        </article>
+
+        <article class="feature-card reveal">
+          <span class="feature-card__icon" aria-hidden="true">📝</span>
+          <h3 class="feature-card__title">Gentle Journaling</h3>
+          <p class="feature-card__desc">
+            Express yourself through writing with thoughtful prompts at your own pace.
+          </p>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+
+  <!-- ════════════════════════════
+       FOOTER
+       ════════════════════════════ -->
+  <footer class="footer" role="contentinfo">
+    <div class="footer__inner">
+
+      <div class="footer__info-row">
+
+        <div class="footer__info-item">
+          <h4>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+            </svg>
+            Your Privacy Matters
+          </h4>
+          <p>Your conversations are private and secure. We don't store or share your personal data.</p>
+        </div>
+
+        <div class="footer__info-item">
+          <h4>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                       2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                       C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                       c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            Mental Health Note
+          </h4>
+          <p>SAHANUBHUTI is a supportive companion, not a replacement for professional mental health care.</p>
+        </div>
+
+        <div class="footer__info-item">
+          <h4>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36
+                       1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1
+                       -9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1
+                       0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+            </svg>
+            Need Immediate Help?
+          </h4>
+          <p>Emergency: <strong>112</strong> &nbsp;|&nbsp; iCall: <strong>9820466726</strong></p>
+        </div>
+
+      </div>
+
+      <div class="footer__bottom">
+        <span>Made with</span>
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                   2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                   C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                   c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+        <span>by SAHANUBHUTI Team &nbsp;&bull;&nbsp; &copy; 2024 SAHANUBHUTI. Compassion, always.</span>
+      </div>
+
+    </div>
+  </footer>
+
+
+  <!-- Script -->
+  <script src="index.js"></script>
+
+
+  <!-- ════════════════════════════
+       LOGIN MODAL
+       ════════════════════════════ -->
+  <div class="modal-overlay" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="modal">
+
+      <button class="modal__close" id="closeLogin" aria-label="Close login">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <div class="modal__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                   2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                   C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                   c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </div>
+
+      <h2 class="modal__title" id="loginTitle">Welcome Back</h2>
+      <p class="modal__sub">We've missed you. 🌸</p>
+
+      <form class="modal__form" id="loginForm" novalidate>
+
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input type="email" id="loginEmail" name="email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <span class="form-error" id="loginEmailErr"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input type="password" id="loginPassword" name="password" placeholder="Your password" autocomplete="current-password" required />
+            <button type="button" class="toggle-pw" aria-label="Toggle password visibility" data-target="loginPassword">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <span class="form-error" id="loginPasswordErr"></span>
+        </div>
+
+        <div class="form-row">
+          <label class="checkbox-label">
+            <input type="checkbox" name="remember" />
+            <span class="checkmark"></span>
+            Remember me
+          </label>
+          <a href="#" class="form-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-form-submit">
+          Log In
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+
+      </form>
+
+      <p class="modal__switch">
+        Don't have an account?
+        <button type="button" class="switch-link" id="switchToSignup">Sign up</button>
+      </p>
+
+    </div>
+  </div>
+
+
+  <!-- ════════════════════════════
+       SIGNUP MODAL
+       ════════════════════════════ -->
+  <div class="modal-overlay" id="signupModal" role="dialog" aria-modal="true" aria-labelledby="signupTitle">
+    <div class="modal">
+
+      <button class="modal__close" id="closeSignup" aria-label="Close signup">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+
+      <div class="modal__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                   2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                   C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                   c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </div>
+
+      <h2 class="modal__title" id="signupTitle">Join Sahanubhuti</h2>
+      <p class="modal__sub">Your safe space starts here. 💛</p>
+
+      <form class="modal__form" id="signupForm" novalidate>
+
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <input type="text" id="signupName" name="name" placeholder="Your name" autocomplete="name" required />
+          </div>
+          <span class="form-error" id="signupNameErr"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="signupEmail">Email</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <input type="email" id="signupEmail" name="email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <span class="form-error" id="signupEmailErr"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <input type="password" id="signupPassword" name="password" placeholder="Create a password" autocomplete="new-password" required />
+            <button type="button" class="toggle-pw" aria-label="Toggle password visibility" data-target="signupPassword">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+          <span class="form-error" id="signupPasswordErr"></span>
+          <div class="password-strength" id="pwStrength" aria-live="polite">
+            <div class="strength-bar"><span id="strengthFill"></span></div>
+            <span id="strengthLabel"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="signupConfirm">Confirm Password</label>
+          <div class="input-wrap">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <input type="password" id="signupConfirm" name="confirm" placeholder="Repeat your password" autocomplete="new-password" required />
+          </div>
+          <span class="form-error" id="signupConfirmErr"></span>
+        </div>
+
+        <label class="checkbox-label" style="margin-bottom: 6px;">
+          <input type="checkbox" id="signupAgree" name="agree" required />
+          <span class="checkmark"></span>
+          I agree to the <a href="#" class="form-link">Terms &amp; Privacy Policy</a>
+        </label>
+        <span class="form-error" id="signupAgreeErr"></span>
+
+        <button type="submit" class="btn-form-submit">
+          Create Account
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"/>
+            <polyline points="12 5 19 12 12 19"/>
+          </svg>
+        </button>
+
+      </form>
+
+      <p class="modal__switch">
+        Already have an account?
+        <button type="button" class="switch-link" id="switchToLogin">Log in</button>
+      </p>
+
+    </div>
+  </div>
+  <script src="./js/index.js"></script>
+</body>
+</html>
