@@ -1,0 +1,86 @@
+/* ===================================
+   SAHANUBHUTI – Footer Styles
+   =================================== */
+
+.footer {
+  background: var(--petal);
+  border-top: 1px solid rgba(212, 149, 106, 0.15);
+  padding: 0 48px 24px;
+}
+
+.footer__inner {
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+/* ── Info Row ── */
+.footer__info-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  padding: 36px 0 28px;
+  border-bottom: 1px solid rgba(212, 149, 106, 0.13);
+}
+
+.footer__info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.footer__info-item h4 {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--rose);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.footer__info-item h4 svg {
+  width: 13px;
+  height: 13px;
+  fill: var(--rose);
+  flex-shrink: 0;
+}
+
+.footer__info-item p {
+  font-size: 0.8rem;
+  color: var(--text-mid);
+  line-height: 1.6;
+}
+
+.footer__info-item p strong {
+  color: var(--text-dark);
+  font-weight: 600;
+}
+
+/* ── Bottom Bar ── */
+.footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding-top: 20px;
+  font-size: 0.77rem;
+  color: var(--text-light);
+}
+
+.footer__bottom svg {
+  width: 11px;
+  height: 11px;
+  fill: var(--rose);
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .footer { padding: 0 24px 20px; }
+  .footer__info-row {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 28px 0 22px;
+  }
+}

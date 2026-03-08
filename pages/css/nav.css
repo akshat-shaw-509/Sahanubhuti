@@ -1,0 +1,172 @@
+/* ===================================
+   SAHANUBHUTI – Navbar Styles
+   =================================== */
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 68px;
+  background: rgba(250, 246, 242, 0.9);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(212, 149, 106, 0.12);
+  transition: box-shadow 0.3s ease;
+}
+
+.navbar.scrolled {
+  box-shadow: 0 4px 20px rgba(180, 110, 80, 0.1);
+}
+
+/* ── Brand ── */
+.navbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.navbar__logo-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+}
+
+.navbar__logo-icon svg {
+  width: 28px;
+  height: 28px;
+  fill: var(--rose);
+  filter: drop-shadow(0 2px 6px rgba(212, 149, 106, 0.4));
+}
+
+.navbar__brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.navbar__brand-name {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: var(--text-dark);
+}
+
+.navbar__brand-tagline {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: 0.68rem;
+  color: var(--text-light);
+  margin-top: 2px;
+}
+
+/* ── Nav Links ── */
+.navbar__nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar__nav-item a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-mid);
+  text-decoration: none;
+  transition: all 0.25s ease;
+}
+
+.navbar__nav-item a:hover {
+  color: var(--text-dark);
+  background: rgba(212, 149, 106, 0.1);
+}
+
+.navbar__nav-item.active a {
+  background: var(--rose);
+  color: #fff;
+  box-shadow: 0 3px 14px rgba(212, 149, 106, 0.38);
+}
+
+.navbar__nav-item a svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+/* ── Auth Buttons ── */
+.navbar__auth {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+
+.btn-login,
+.btn-signup {
+  font-family: var(--font-body);
+  font-size: 0.855rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
+  padding: 8px 20px;
+  transition: all 0.25s ease;
+  line-height: 1;
+}
+
+.btn-login {
+  background: transparent;
+  color: var(--text-mid);
+  border: 1.5px solid rgba(212, 149, 106, 0.3);
+}
+
+.btn-login:hover {
+  background: rgba(212, 149, 106, 0.08);
+  border-color: var(--rose);
+  color: var(--rose);
+}
+
+.btn-signup {
+  background: linear-gradient(135deg, var(--rose) 0%, var(--warm-rose) 100%);
+  color: #fff;
+  box-shadow: 0 3px 14px rgba(212, 149, 106, 0.35);
+}
+
+.btn-signup:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(212, 149, 106, 0.48);
+}
+
+/* ── Responsive ── */
+@media (max-width: 860px) {
+  .navbar { padding: 0 24px; }
+  .navbar__brand-tagline { display: none; }
+}
+
+@media (max-width: 700px) {
+  .navbar__auth { margin-left: 6px; }
+  .btn-login { display: none; }
+  .btn-signup { padding: 8px 14px; font-size: 0.8rem; }
+}
+
+@media (max-width: 580px) {
+  .navbar__nav-item a span { display: none; }
+  .navbar__nav-item a { padding: 9px 11px; }
+}
