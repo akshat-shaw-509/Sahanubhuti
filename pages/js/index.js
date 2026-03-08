@@ -3,7 +3,7 @@
    Wired to real backend API
    =================================== */
 
-const API_URL = "http://localhost:5000/api"; // ← change for production
+const API_URL = "https://sahanubhuti.onrender.com/api";
 
 /* ══════════════════════════════════════
    AUTH HELPERS
@@ -547,3 +547,4 @@ function initPasswordToggles() {
     });
   });
 }
+
