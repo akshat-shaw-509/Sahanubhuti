@@ -1,22 +1,17 @@
 // backend/server.js
 // Main entry point — sets up Express, connects to MongoDB, registers routes
-
-require("dotenv").config(); // Load .env variables first
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 
-// ─── Connect to MongoDB ───────────────────────────────────────────────────────
-connectDB();
-
 // ─── Initialise Express ───────────────────────────────────────────────────────
 const app = express();
-app.set("trust proxy", 1);
+app.set("trust proxy", 1); // Required for rate limiting behind Render's proxy
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
-// Allow requests from your frontend origin (Live Server / deployed URL)
 app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN || "http://127.0.0.1:5500",
@@ -24,11 +19,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
-// Parse incoming JSON request bodies
-app.use(express.json({ limit: "10kb" })); // Limit body size for safety
-
-// Parse URL-encoded bodies (e.g. from HTML forms)
+app.use(express.json({ limit: "10kb" }));
 app.use(express.urlencoded({ extended: true }));
 
 // ─── Health Check ─────────────────────────────────────────────────────────────
@@ -37,16 +28,13 @@ app.get("/", (req, res) => {
     success: true,
     message: "🌿 Sahanubhuti API is running",
     version: "1.0.0",
-    endpoints: {
-      auth: "/api/auth",
-      chat: "/api/chat",
-    },
+    endpoints: { auth: "/api/auth", chat: "/api/chat" },
   });
 });
 
 // ─── API Routes ───────────────────────────────────────────────────────────────
-app.use("/api/auth", authRoutes); // /api/auth/register, /api/auth/login, etc.
-app.use("/api/chat", chatRoutes); // /api/chat/message, /api/chat/verify
+app.use("/api/auth", authRoutes);
+app.use("/api/chat", chatRoutes);
 
 // ─── 404 Handler ─────────────────────────────────────────────────────────────
 app.use((req, res) => {
@@ -62,9 +50,13 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ─── Start Server ─────────────────────────────────────────────────────────────
+// ─── Start Server FIRST, then connect to DB ───────────────────────────────────
+// Render requires the port to be bound quickly — DB connection happens after.
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀  Server running on http://localhost:${PORT}`);
   console.log(`📌  Environment: ${process.env.NODE_ENV || "development"}`);
+
+  // Connect to MongoDB after server is already listening
+  connectDB();
 });
