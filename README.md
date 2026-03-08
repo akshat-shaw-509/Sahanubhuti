@@ -1,161 +1,197 @@
-# Sahanubhuti
 # 🌸 Sahanubhuti
 
-> *"I'm here with you. You're not alone."*
+> **“I'm here with you. You're not alone.”**
 
-Sahanubhuti (Sanskrit: सहानुभूति — *empathy, fellow-feeling*) is a warm, AI-powered emotional support companion. It provides a safe, judgment-free space for users to express their feelings, track their moods, and reflect through journaling.
+Sahanubhuti (Sanskrit: सहानुभूति — *empathy*) is an **AI-powered emotional support companion** that provides a safe and judgment-free space for users to express their feelings.
+
+Users can **chat with an empathetic AI, track their mood patterns, and maintain private journals** to reflect on their emotional well-being.
+
+# ✨ Features
+
+### 💬 AI Emotional Companion
+
+* Real-time empathetic conversations
+* Crisis detection with **Indian mental health helplines**
+
+### 📊 Mood Tracker
+
+* Track daily emotional states
+* Visual weekly mood insights
+* Streak tracking for consistency
+
+### 📝 Private Journaling
+
+* Write freely using thoughtful prompts
+* Entries stored securely in the browser
+* Reflection-focused journaling system
+
+### 🔐 Authentication
+
+* JWT-based login & registration
+* Password hashing using **bcrypt**
+* Guest chat mode with fallback responses
 
 ---
 
-## ✨ Features
+# 🛠️ Tech Stack
 
-- **💬 Compassionate Chat** — Real-time AI-powered conversations using Claude via OpenRouter. Sahanubhuti listens, validates, and responds with genuine empathy. Includes crisis detection with Indian helpline numbers.
-- **📊 Mood Tracker** — Log your daily mood with one click. View your emotional patterns across the week with insights and streaks.
-- **📝 Gentle Journaling** — Write freely with thoughtful prompts. All entries are saved privately in your browser.
-- **🔐 Auth System** — Secure JWT-based registration and login. Guests can still chat using local fallback responses.
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| Frontend | HTML, CSS, Vanilla JavaScript |
-| Backend | Node.js, Express.js |
-| Database | MongoDB Atlas (Mongoose) |
-| Auth | JWT (jsonwebtoken + bcryptjs) |
-| AI | Claude via OpenRouter API |
-| Hosting | Render (backend) + GitHub Pages (frontend) |
+| Layer          | Technology                    |
+| -------------- | ----------------------------- |
+| Frontend       | HTML, CSS, Vanilla JavaScript |
+| Backend        | Node.js, Express.js           |
+| Database       | MongoDB Atlas                 |
+| Authentication | JWT + bcrypt                  |
+| AI Integration | Claude (via OpenRouter API)   |
+| Deployment     | Render + GitHub Pages         |
 
 ---
 
-## 🚀 Getting Started
+# 📁 Project Structure
 
-### Prerequisites
+```
+Sahanubhuti
+│
+├── index.html
+├── index.js
+│
+├── pages
+│   ├── html
+│   │   ├── chat.html
+│   │   ├── mood.html
+│   │   └── journal.html
+│   │
+│   ├── css
+│   └── js
+│       ├── chat.js
+│       ├── mood.js
+│       ├── journal.js
+│       └── index.js
+│
+└── backend
+    ├── server.js
+    │
+    ├── config
+    │   └── db.js
+    │
+    ├── controllers
+    │   ├── authController.js
+    │   └── chatController.js
+    │
+    ├── middleware
+    │   └── authMiddleware.js
+    │
+    ├── models
+    │   └── User.js
+    │
+    ├── routes
+    │   ├── authRoutes.js
+    │   └── chatRoutes.js
+    │
+    └── utils
+        └── validateInput.js
+```
 
-- Node.js 18+
-- A MongoDB Atlas account
-- An OpenRouter API key (free tier available at [openrouter.ai](https://openrouter.ai))
+---
 
-### 1. Clone the repository
+# ⚙️ Getting Started
+
+## Prerequisites
+
+* Node.js **v18+**
+* MongoDB Atlas
+* OpenRouter API key
+
+Get API key here
+[https://openrouter.ai](https://openrouter.ai)
+
+---
+
+## 1️⃣ Clone Repository
 
 ```bash
 git clone https://github.com/akshat-shaw-509/Sahanubhuti.git
 cd Sahanubhuti
 ```
 
-### 2. Install backend dependencies
+---
+
+## 2️⃣ Install Backend Dependencies
 
 ```bash
 cd backend
 npm install
 ```
 
-### 3. Create your `.env` file
+---
 
-```bash
-# backend/.env
-MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/sahanubhuti
-JWT_SECRET=your_jwt_secret_here
+## 3️⃣ Configure Environment Variables
+
+Create `.env` inside **backend**
+
+```
+MONGO_URI=your_mongodb_connection
+JWT_SECRET=your_secret_key
 JWT_EXPIRES_IN=1h
-OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_API_KEY=your_api_key
 CLIENT_ORIGIN=http://127.0.0.1:5500
 PORT=5000
 ```
 
-### 4. Run the backend
+---
+
+## 4️⃣ Run Backend
 
 ```bash
 node server.js
 ```
 
-### 5. Open the frontend
-
-Open `index.html` with Live Server (VS Code extension) or any static file server.
-
 ---
 
-## 🌐 Deployment
+## 5️⃣ Run Frontend
 
-### Backend — Render
-
-1. Push your code to GitHub
-2. Create a new **Web Service** on [render.com](https://render.com)
-3. Set **Root Directory** to `backend`
-4. Set **Start Command** to `node server.js`
-5. Add all environment variables from your `.env` under **Environment**
-6. Deploy
-
-### Frontend — GitHub Pages
-
-1. Go to your repo → **Settings → Pages**
-2. Set source to **Deploy from branch → main**
-3. Your site will be live at `https://<your-username>.github.io/Sahanubhuti/`
-4. Update `CLIENT_ORIGIN` in Render to match this URL
-
----
-
-## 📁 Project Structure
+Open:
 
 ```
-Sahanubhuti/
-├── index.html               # Home page
-├── index.js                 # Root redirect script
-├── pages/
-│   ├── html/
-│   │   ├── chat.html        # Chat page
-│   │   ├── mood.html        # Mood tracker
-│   │   └── journal.html     # Journal
-│   ├── css/                 # Stylesheets
-│   └── js/
-│       ├── index.js         # Auth + modal logic
-│       ├── chat.js          # Chat + AI integration
-│       ├── mood.js          # Mood tracker logic
-│       └── journal.js       # Journal logic
-└── backend/
-    ├── server.js            # Express entry point
-    ├── config/
-    │   └── db.js            # MongoDB connection
-    ├── controllers/
-    │   ├── authController.js
-    │   └── chatController.js
-    ├── middleware/
-    │   └── authMiddleware.js
-    ├── models/
-    │   └── User.js
-    ├── routes/
-    │   ├── authRoutes.js
-    │   └── chatRoutes.js
-    └── utils/
-        └── validateInput.js
+index.html
 ```
 
----
-
-## 🔒 Security
-
-- Passwords are hashed with **bcrypt** (12 salt rounds)
-- JWTs expire after 1 hour
-- Rate limiting on auth routes (10 requests / 15 minutes per IP)
-- CORS restricted to the configured `CLIENT_ORIGIN`
-- Request body size capped at 10kb
+using **Live Server (VSCode)** or any static server.
 
 ---
 
-## 🆘 Crisis Resources
+# 🔒 Security
 
-Sahanubhuti is a supportive companion, **not a replacement for professional mental health care**. If you or someone you know is in crisis:
-
-- **Emergency:** 112
-- **iCall (India):** 9820466726
-- **iCall Website:** [icallhelpline.org](https://icallhelpline.org)
-
----
-
-## 📄 License
-
-MIT License — feel free to fork, adapt, and build on this with care. 🌿
+* Password hashing using **bcrypt**
+* JWT authentication with **1 hour expiration**
+* Rate limiting on authentication routes
+* Strict CORS configuration
+* Request body size limited to **10kb**
 
 ---
 
-*Made with 💛 by the Sahanubhuti Team. Compassion, always.*
+# 🆘 Crisis Resources
+
+Sahanubhuti is **not a replacement for professional help**.
+
+If you or someone you know is struggling:
+
+| Resource    | Contact                                                |
+| ----------- | ------------------------------------------------------ |
+| Emergency   | 112                                                    |
+| iCall India | +91 9820466726                                         |
+| Website     | [https://icallhelpline.org](https://icallhelpline.org) |
+
+---
+
+# 📄 License
+
+MIT License
+
+---
+
+# 👨‍💻 Author
+
+**Akshat Shaw**
+
+GitHub
+[https://github.com/akshat-shaw-509](https://github.com/akshat-shaw-509)
