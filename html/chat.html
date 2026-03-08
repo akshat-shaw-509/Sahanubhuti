@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="SAHANUBHUTI – Chat with your compassionate AI companion." />
+  <title>Chat – SAHANUBHUTI</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23d4956a' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+  <!-- Styles: pull in variables/reset from index.css, then page-specific -->
+  <link rel="stylesheet" href="../css/index.css" />
+  <link rel="stylesheet" href="../css/nav.css" />
+  <link rel="stylesheet" href="../css/chat.css" />
+</head>
+
+<body class="chat-page">
+
+  <!-- ════════════════════════════
+       NAVBAR
+       ════════════════════════════ -->
+  <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+
+    <a href="../index.html" class="navbar__brand" aria-label="Sahanubhuti Home">
+      <div class="navbar__logo-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                   2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                   C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                   c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        </svg>
+      </div>
+      <div class="navbar__brand-text">
+        <span class="navbar__brand-name">SAHANUBHUTI</span>
+        <span class="navbar__brand-tagline">"I'm here with you. You're not alone."</span>
+      </div>
+    </a>
+
+    <ul class="navbar__nav">
+      <li class="navbar__nav-item">
+        <a href="../index.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Home</span>
+        </a>
+      </li>
+      <li class="navbar__nav-item active">
+        <a href="chat.html" aria-current="page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+          <span>Chat</span>
+        </a>
+      </li>
+      <li class="navbar__nav-item">
+        <a href="mood.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+            <polyline points="17 6 23 6 23 12"/>
+          </svg>
+          <span>Mood Tracker</span>
+        </a>
+      </li>
+      <li class="navbar__nav-item">
+        <a href="journal.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+          </svg>
+          <span>Journal</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="navbar__auth">
+      <button class="btn-login" id="openLogin" aria-label="Log in">Log In</button>
+      <button class="btn-signup" id="openSignup" aria-label="Sign up">Sign Up</button>
+    </div>
+
+  </nav>
+
+
+  <!-- ════════════════════════════
+       MAIN LAYOUT
+       ════════════════════════════ -->
+  <div class="chat-layout">
+
+    <!-- ── LEFT: Chat Panel ── -->
+    <main class="chat-panel" role="main">
+
+      <!-- Chat Header -->
+      <header class="chat-header">
+        <div class="chat-header__avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                     2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                     C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                     c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </div>
+        <div class="chat-header__info">
+          <span class="chat-header__name">Sahanubhuti</span>
+          <span class="chat-header__tagline">Always here for you 💕</span>
+        </div>
+        <div class="chat-header__status" aria-label="Active now">
+          <div class="status-dot" aria-hidden="true"></div>
+          <span>Active now</span>
+        </div>
+      </header>
+
+      <!-- Messages -->
+      <div class="chat-messages" id="chatMessages" role="log" aria-live="polite" aria-label="Chat messages">
+
+        <div class="chat-divider" aria-label="Today">
+          <span>Today</span>
+        </div>
+
+        <!-- Initial AI greeting -->
+        <div class="message message--ai">
+          <div class="msg-avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                       2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                       C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                       c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </div>
+          <div class="msg-content">
+            <div class="msg-bubble">
+              Hello, dear friend. I'm Sahanubhuti, and I'm here to listen with care and understanding. How are you feeling today? 🌸
+            </div>
+            <span class="msg-time" id="greetingTime"></span>
+          </div>
+        </div>
+
+        <!-- Typing indicator (hidden by default) -->
+        <div class="typing-indicator" id="typingIndicator" aria-label="Sahanubhuti is typing">
+          <div class="msg-avatar" aria-hidden="true">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                       2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                       C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                       c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+          </div>
+          <div class="typing-bubble" aria-hidden="true">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Input Area -->
+      <div class="chat-input-wrap">
+        <div class="chat-input-inner">
+          <textarea
+            id="chatInput"
+            placeholder="Tell me what's on your mind…"
+            rows="1"
+            aria-label="Type your message"
+            autocomplete="off"
+            spellcheck="true"
+          ></textarea>
+          <button class="btn-send" id="sendBtn" disabled aria-label="Send message">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+        <p class="chat-input-hint">Press Enter to send &nbsp;·&nbsp; Shift+Enter for new line</p>
+      </div>
+
+    </main>
+
+
+    <!-- ── RIGHT: Mood Sidebar ── -->
+    <aside class="mood-sidebar" aria-label="Mood check-in and resources">
+
+      <!-- Mood Check-in -->
+      <div class="mood-card">
+        <h2 class="mood-card__title">How are you feeling right now?</h2>
+        <p class="mood-card__sub">
+          One click — no words needed
+          <span aria-hidden="true">👆</span>
+        </p>
+
+        <div class="mood-grid" role="group" aria-label="Select your current mood">
+          <button class="mood-btn" data-mood="calm" aria-label="I feel calm" aria-pressed="false">
+            <span class="mood-btn__emoji" aria-hidden="true">😌</span>
+            <span class="mood-btn__label">Calm</span>
+          </button>
+          <button class="mood-btn" data-mood="sad" aria-label="I feel sad" aria-pressed="false">
+            <span class="mood-btn__emoji" aria-hidden="true">😢</span>
+            <span class="mood-btn__label">Sad</span>
+          </button>
+          <button class="mood-btn" data-mood="anxious" aria-label="I feel anxious" aria-pressed="false">
+            <span class="mood-btn__emoji" aria-hidden="true">😰</span>
+            <span class="mood-btn__label">Anxious</span>
+          </button>
+          <button class="mood-btn" data-mood="angry" aria-label="I feel angry" aria-pressed="false">
+            <span class="mood-btn__emoji" aria-hidden="true">😠</span>
+            <span class="mood-btn__label">Angry</span>
+          </button>
+          <button class="mood-btn" data-mood="tired" aria-label="I feel tired" aria-pressed="false">
+            <span class="mood-btn__emoji" aria-hidden="true">😴</span>
+            <span class="mood-btn__label">Tired</span>
+          </button>
+        </div>
+
+        <p class="mood-response" id="moodResponse" aria-live="polite">
+          Thank you for sharing how you feel.<br>Your feelings are valid and important. 💕
+        </p>
+      </div>
+
+      <!-- Quick Prompts -->
+      <div class="quick-prompts">
+        <p class="quick-prompts__title">Start with a prompt</p>
+        <div class="prompt-list">
+          <button class="prompt-chip" data-prompt="I feel overwhelmed" aria-label="I feel overwhelmed">
+            <span class="prompt-chip__icon" aria-hidden="true">🌊</span>
+            <span class="prompt-chip__text">I feel overwhelmed</span>
+          </button>
+          <button class="prompt-chip" data-prompt="I need someone to talk to" aria-label="I need someone to talk to">
+            <span class="prompt-chip__icon" aria-hidden="true">🫂</span>
+            <span class="prompt-chip__text">I need someone to talk to</span>
+          </button>
+          <button class="prompt-chip" data-prompt="I'm struggling with anxiety" aria-label="I'm struggling with anxiety">
+            <span class="prompt-chip__icon" aria-hidden="true">💭</span>
+            <span class="prompt-chip__text">I'm struggling with anxiety</span>
+          </button>
+          <button class="prompt-chip" data-prompt="I can't sleep lately" aria-label="I can't sleep lately">
+            <span class="prompt-chip__icon" aria-hidden="true">🌙</span>
+            <span class="prompt-chip__text">I can't sleep lately</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Support Tip -->
+      <div class="support-tips">
+        <p class="support-tips__title">Gentle reminder</p>
+        <div class="tip-card">
+          <span class="tip-card__icon" aria-hidden="true">🌿</span>
+          <p class="tip-card__text">
+            Sahanubhuti is a supportive companion, not a replacement for professional care. If you're in crisis, please reach out to a professional.
+          </p>
+        </div>
+      </div>
+
+    </aside>
+
+  </div><!-- /chat-layout -->
+
+
+  <!-- ── Need Support? Floating Button ── -->
+  <button class="btn-support" id="supportBtn" aria-label="Need support? See resources" aria-expanded="false">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+               2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+               C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+               c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+    </svg>
+    Need support?
+  </button>
+
+  <!-- Support Panel -->
+  <div class="support-panel" id="supportPanel" role="region" aria-label="Support resources">
+    <h4>🫂 You are not alone</h4>
+    <p>If you need immediate help, these resources are available 24/7.</p>
+    <div class="support-contact">
+      <a href="tel:112" aria-label="Call Emergency Services 112">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.46 16z"/>
+        </svg>
+        Emergency: 112
+      </a>
+      <a href="tel:9820466726" aria-label="Call iCall 9820466726">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.54a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.46 16z"/>
+        </svg>
+        iCall: 9820466726
+      </a>
+      <a href="https://icallhelpline.org" target="_blank" rel="noopener" aria-label="Visit iCall helpline website">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="2" y1="12" x2="22" y2="12"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+        Visit iCall Website
+      </a>
+    </div>
+  </div>
+
+
+  <!-- Scripts -->
+  <script>
+    // Set greeting timestamp
+    const t = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const el = document.getElementById('greetingTime');
+    if (el) el.textContent = t;
+  </script>
+  <script src="../js/chat.js"></script>
+</body>
+</html>
