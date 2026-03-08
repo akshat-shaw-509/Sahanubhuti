@@ -5,7 +5,7 @@
    guest users (not logged in).
    =================================== */
 
-const API_URL = "http://localhost:5000/api"; // ← change for production
+const API_URL = "https://sahanubhuti.onrender.com/api";
 
 /* ══════════════════════════════════════
    AUTH HELPERS
@@ -622,3 +622,4 @@ function escapeHTML(str) {
 function formatMessage(text) {
   return escapeHTML(text).replace(/\n/g, "<br>");
 }
+
