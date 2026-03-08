@@ -13,6 +13,7 @@ connectDB();
 
 // ─── Initialise Express ───────────────────────────────────────────────────────
 const app = express();
+app.set("trust proxy", 1);
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
 // Allow requests from your frontend origin (Live Server / deployed URL)
