@@ -55,7 +55,7 @@ const sendMessage = async (req, res) => {
       },
       body: JSON.stringify({
         model: "arcee-ai/trinity-mini:free",
-        max_tokens: 300,
+        max_tokens: 500,
         messages,
       }),
     });
@@ -113,4 +113,5 @@ const verifySession = async (req, res) => {
 };
 
 module.exports = { sendMessage, verifySession };
+
 
