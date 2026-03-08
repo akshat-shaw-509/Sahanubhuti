@@ -2,6 +2,61 @@
    SAHANUBHUTI – Journal Page JS
    =================================== */
 
+/* ══════════════════════════════════════
+   AUTH NAVBAR
+   ══════════════════════════════════════ */
+
+const API_URL = "http://localhost:5000/api";
+
+function getToken() {
+  return localStorage.getItem("sahanubhuti_token");
+}
+
+function getStoredUser() {
+  try {
+    return JSON.parse(localStorage.getItem("sahanubhuti_user"));
+  } catch {
+    return null;
+  }
+}
+
+function clearAuth() {
+  localStorage.removeItem("sahanubhuti_token");
+  localStorage.removeItem("sahanubhuti_user");
+}
+
+function initAuthNavbar() {
+  const token = getToken();
+  const user  = getStoredUser();
+
+  const authEl = document.querySelector(".navbar__auth");
+  if (!authEl) return;
+
+  if (token && user) {
+    authEl.innerHTML = `
+      <span style="
+        font-size: 0.85rem;
+        color: var(--text-muted, #a08880);
+        font-family: var(--font-accent, serif);
+        font-style: italic;
+        white-space: nowrap;
+      ">Hi, ${user.name.split(" ")[0]} 🌸</span>
+      <button class="btn-login" id="logoutBtn" aria-label="Log out">Log Out</button>
+    `;
+
+    document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+      try {
+        await fetch(`${API_URL}/auth/logout`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+      } catch { /* ignore */ }
+      clearAuth();
+      location.reload();
+    });
+  }
+}
+
 /* ── Prompt Pool ── */
 const PROMPTS = [
   '"Would you like to write about what made you feel this way today?"',
@@ -26,7 +81,7 @@ const MOOD_MAP = {
 };
 
 /* ── State ── */
-let entries = [];    // [{ id, date, prompt, text, mood, wordCount }]
+let entries = [];
 let currentPromptIdx = 0;
 let activeEntryId = null;
 
@@ -36,6 +91,7 @@ let activeEntryId = null;
 document.addEventListener('DOMContentLoaded', () => {
   fadeInPage();
   initNavbarScroll();
+  initAuthNavbar();       // ← auth state
   loadEntries();
   setRandomPrompt(false);
   initTextarea();
@@ -107,11 +163,8 @@ function setRandomPrompt(animate = true) {
 function initNewPromptBtn() {
   document.getElementById('newPromptBtn')?.addEventListener('click', () => {
     setRandomPrompt(true);
-    // Clear textarea only if empty
     const ta = document.getElementById('journalTextarea');
-    if (ta && ta.value.trim() === '') {
-      ta.focus();
-    }
+    if (ta && ta.value.trim() === '') ta.focus();
   });
 }
 
@@ -128,8 +181,8 @@ function initTextarea() {
 }
 
 function updateWordCount() {
-  const ta  = document.getElementById('journalTextarea');
-  const el  = document.getElementById('wordCount');
+  const ta = document.getElementById('journalTextarea');
+  const el = document.getElementById('wordCount');
   if (!ta || !el) return;
   const words = ta.value.trim() ? ta.value.trim().split(/\s+/).length : 0;
   el.textContent = `${words} word${words !== 1 ? 's' : ''}`;
@@ -170,23 +223,20 @@ function initSaveBtn() {
       wordCount: ta.value.trim().split(/\s+/).length,
     };
 
-    entries.unshift(entry); // newest first
+    entries.unshift(entry);
     saveEntries();
     renderEntries();
 
-    // Clear textarea
     ta.value = '';
     updateWordCount();
     updateSaveBtnState();
     setRandomPrompt(true);
 
-    // Toast
     if (toast) {
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 2600);
     }
 
-    // Button feedback
     btn.innerHTML = `
       <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
       Saved!`;
@@ -241,7 +291,6 @@ function renderEntries() {
     </div>
   `).join('');
 
-  // Click → open
   list.querySelectorAll('.entry-item').forEach(el => {
     el.addEventListener('click', (e) => {
       if (e.target.closest('.entry-item__delete')) return;
@@ -254,7 +303,6 @@ function renderEntries() {
     });
   });
 
-  // Delete buttons
   list.querySelectorAll('.entry-item__delete').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -270,11 +318,11 @@ function deleteEntry(id) {
 }
 
 /* ════════════════════════════════════
-   ENTRY OVERLAY (read full entry)
+   ENTRY OVERLAY
    ════════════════════════════════════ */
 function initEntryOverlay() {
-  const overlay   = document.getElementById('entryOverlay');
-  const closeBtn  = document.getElementById('closeEntryModal');
+  const overlay  = document.getElementById('entryOverlay');
+  const closeBtn = document.getElementById('closeEntryModal');
   if (!overlay) return;
 
   closeBtn?.addEventListener('click', () => closeEntry());
@@ -291,7 +339,7 @@ function openEntry(id) {
   const overlay = document.getElementById('entryOverlay');
   if (!entry || !overlay) return;
 
-  document.getElementById('modalDate').textContent  = entry.date + (entry.mood ? `  ${MOOD_MAP[entry.mood]}` : '');
+  document.getElementById('modalDate').textContent   = entry.date + (entry.mood ? `  ${MOOD_MAP[entry.mood]}` : '');
   document.getElementById('modalPrompt').textContent = entry.prompt;
   document.getElementById('modalBody').textContent   = entry.text;
 
