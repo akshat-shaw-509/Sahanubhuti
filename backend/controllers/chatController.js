@@ -54,7 +54,7 @@ const sendMessage = async (req, res) => {
         "X-Title": "Sahanubhuti",
       },
       body: JSON.stringify({
-        model: "anthropic/claude-haiku-4-5",
+        model: "arcee-ai/trinity-mini:free",
         max_tokens: 300,
         messages,
       }),
@@ -113,3 +113,4 @@ const verifySession = async (req, res) => {
 };
 
 module.exports = { sendMessage, verifySession };
+
