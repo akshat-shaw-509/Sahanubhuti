@@ -6,7 +6,7 @@
    AUTH NAVBAR
    ══════════════════════════════════════ */
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://sahanubhuti.onrender.com/api";
 
 function getToken() {
   return localStorage.getItem("sahanubhuti_token");
@@ -360,3 +360,4 @@ function escapeHTML(str) {
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
