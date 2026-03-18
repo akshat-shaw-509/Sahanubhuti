@@ -93,6 +93,17 @@
        ════════════════════════════ -->
   <div class="chat-layout">
 
+    <!-- ——— LEFT: Threads Sidebar ——— -->
+    <aside class="history-sidebar" aria-label="Chats">
+      <div class="history-header">
+        <span class="history-title">Chats</span>
+        <button class="history-new" id="newChatBtn" type="button">New chat</button>
+      </div>
+      <div class="history-list" id="threadsList" role="list">
+        <div class="history-empty" id="threadsEmpty">No chats yet.</div>
+      </div>
+    </aside>
+
     <!-- ── LEFT: Chat Panel ── -->
     <main class="chat-panel" role="main">
 
@@ -171,6 +182,14 @@
             autocomplete="off"
             spellcheck="true"
           ></textarea>
+          <button class="btn-mic" id="voiceBtn" type="button" aria-label="Start voice input">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/>
+              <line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+          </button>
           <button class="btn-send" id="sendBtn" disabled aria-label="Send message">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="22" y1="2" x2="11" y2="13"/>
@@ -178,6 +197,7 @@
             </svg>
           </button>
         </div>
+        <div class="voice-status" id="voiceStatus" role="status" aria-live="polite"></div>
         <p class="chat-input-hint">Press Enter to send &nbsp;·&nbsp; Shift+Enter for new line</p>
       </div>
 
