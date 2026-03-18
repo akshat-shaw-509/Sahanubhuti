@@ -1,6 +1,9 @@
 // backend/controllers/chatController.js
 // Handles chat — calls Claude via OpenRouter for real empathetic responses
 
+const ChatMessage = require("../models/ChatMessage");
+const ChatThread = require("../models/ChatThread");
+
 const SYSTEM_PROMPT = `You are Sahanubhuti, a warm, compassionate emotional support companion.
 Your name means "empathy" or "fellow-feeling" in Sanskrit.
 
@@ -26,9 +29,34 @@ Remember: You are Sahanubhuti. The user has come to you for comfort.`;
 // @desc    Send message to Claude via OpenRouter and return response
 // @access  Private
 // ─────────────────────────────────────────────────────────────────────────────
+const HISTORY_LIMIT = 40; // ~20 turns
+
+const loadHistory = async (userId, threadId) => {
+  const query = { user: userId };
+  if (threadId) query.thread = threadId;
+  const docs = await ChatMessage.find(query)
+    .sort({ createdAt: -1 })
+    .limit(HISTORY_LIMIT)
+    .lean();
+  return docs.reverse().map((d) => ({
+    role: d.role,
+    content: d.content,
+    createdAt: d.createdAt,
+  }));
+};
+
+const getOrCreateDefaultThread = async (userId) => {
+  let thread = await ChatThread.findOne({ user: userId }).sort({ updatedAt: -1 });
+  if (!thread) {
+    thread = await ChatThread.create({ user: userId, title: "New chat" });
+  }
+  return thread;
+};
+
 const sendMessage = async (req, res) => {
+  let thread = null;
   try {
-    const { message, history = [] } = req.body;
+    const { message, threadId } = req.body;
 
     if (!message || message.trim() === "") {
       return res.status(400).json({
@@ -37,11 +65,28 @@ const sendMessage = async (req, res) => {
       });
     }
 
+    thread = threadId
+      ? await ChatThread.findOne({ _id: threadId, user: req.user.id })
+      : await getOrCreateDefaultThread(req.user.id);
+
+    if (!thread) {
+      return res.status(404).json({ success: false, message: "Thread not found." });
+    }
+
+    // Store the user message first
+    await ChatMessage.create({
+      user: req.user.id,
+      thread: thread._id,
+      role: "user",
+      content: message.trim(),
+    });
+
     // Build messages array (OpenAI-compatible format used by OpenRouter)
+    const history = await loadHistory(req.user.id, thread._id);
+    const promptHistory = history.map((h) => ({ role: h.role, content: h.content }));
     const messages = [
       { role: "system", content: SYSTEM_PROMPT },
-      ...history.slice(-20),
-      { role: "user", content: message },
+      ...promptHistory,
     ];
 
     // Call Claude via OpenRouter
@@ -69,12 +114,31 @@ const sendMessage = async (req, res) => {
 
     const botResponse = data.choices?.[0]?.message?.content || "I'm here for you. 🌸";
 
+    // Store assistant reply
+    await ChatMessage.create({
+      user: req.user.id,
+      thread: thread._id,
+      role: "assistant",
+      content: botResponse,
+    });
+
+    // If thread is still a generic title, update it based on first message
+    if (thread.title === "New chat") {
+      const title = message.trim().slice(0, 60);
+      if (title) {
+        thread.title = title;
+      }
+    }
+    thread.updatedAt = new Date();
+    await thread.save();
+
     res.status(200).json({
       success: true,
       data: {
         userMessage: message,
         botResponse,
         timestamp: new Date().toISOString(),
+        threadId: thread._id,
       },
     });
 
@@ -88,12 +152,25 @@ const sendMessage = async (req, res) => {
     ];
     const fallback = fallbacks[Math.floor(Math.random() * fallbacks.length)];
 
+    // Store assistant fallback reply too
+    try {
+      await ChatMessage.create({
+        user: req.user.id,
+        thread: thread._id,
+        role: "assistant",
+        content: fallback,
+      });
+    } catch {
+      // If DB write fails, still return response
+    }
+
     res.status(200).json({
       success: true,
       data: {
         userMessage: req.body.message,
         botResponse: fallback,
         timestamp: new Date().toISOString(),
+        threadId: thread?._id,
       },
     });
   }
@@ -112,6 +189,43 @@ const verifySession = async (req, res) => {
   });
 };
 
-module.exports = { sendMessage, verifySession };
+const getHistory = async (req, res) => {
+  try {
+    const threadId = req.query.threadId;
+    const history = await loadHistory(req.user.id, threadId);
+    res.status(200).json({
+      success: true,
+      data: history,
+    });
+  } catch (error) {
+    console.error("History error:", error.message);
+    res.status(500).json({ success: false, message: "Failed to load history." });
+  }
+};
+
+const getThreads = async (req, res) => {
+  try {
+    const threads = await ChatThread.find({ user: req.user.id })
+      .sort({ updatedAt: -1 })
+      .lean();
+    res.status(200).json({ success: true, data: threads });
+  } catch (error) {
+    console.error("Threads error:", error.message);
+    res.status(500).json({ success: false, message: "Failed to load threads." });
+  }
+};
+
+const createThread = async (req, res) => {
+  try {
+    const title = (req.body?.title || "New chat").toString().trim().slice(0, 80) || "New chat";
+    const thread = await ChatThread.create({ user: req.user.id, title });
+    res.status(201).json({ success: true, data: thread });
+  } catch (error) {
+    console.error("Create thread error:", error.message);
+    res.status(500).json({ success: false, message: "Failed to create thread." });
+  }
+};
+
+module.exports = { sendMessage, verifySession, getHistory, getThreads, createThread };
 
 
