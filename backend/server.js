@@ -1,6 +1,7 @@
 // backend/server.js
 // Main entry point — sets up Express, connects to MongoDB, registers routes
-require("dotenv").config();
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, ".env") });
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -12,11 +13,25 @@ const app = express();
 app.set("trust proxy", 1); // Required for rate limiting behind Render's proxy
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
+const allowedOrigins = (
+  process.env.CLIENT_ORIGIN ||
+  "http://127.0.0.1:3000,http://localhost:3000,http://127.0.0.1:5500,https://akshat-shaw-509.github.io"
+)
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || "http://127.0.0.1:5500",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 app.use(express.json({ limit: "10kb" }));
