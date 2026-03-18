@@ -5,7 +5,7 @@
    guest users (not logged in).
    =================================== */
 
-const API_URL = "https://sahanubhuti.onrender.com/api";
+const API_URL = "http://127.0.0.1:5000/api";
 
 /* ══════════════════════════════════════
    AUTH HELPERS
@@ -81,6 +81,10 @@ const QUICK_RESPONSES = {
 let selectedMood = null;
 let isTyping = false;
 let messageCount = 0;
+let messageNodes = [];
+let currentThreadId = null;
+let threadsCache = [];
+let lastInputSource = "text";
 
 // Multi-turn conversation history sent to backend
 // Format: [{ role: 'user'|'assistant', content: string }]
@@ -95,6 +99,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initNavbarScroll();
   initMoodButtons();
   initChatInput();
+  initVoiceToText();
   initSupportButton();
   initPromptChips();
   autoResizeTextarea();
@@ -134,6 +139,7 @@ async function checkAuthAndInit() {
         // Session valid — show AI badge and update navbar
         updateNavbarForAuth(user);
         showAIBadge();
+        await loadThreadsAndSelect();
         focusChatInput();
         return;
       }
@@ -176,6 +182,8 @@ function updateNavbarForAuth(user) {
     }
     clearAuth();
     conversationHistory = [];
+    threadsCache = [];
+    currentThreadId = null;
     location.reload();
   });
 }
@@ -229,6 +237,101 @@ function showGuestBanner() {
 
 function focusChatInput() {
   setTimeout(() => document.getElementById("chatInput")?.focus(), 400);
+}
+
+async function loadChatHistory(threadId) {
+  const token = getToken();
+  if (!token) return;
+
+  try {
+    const url = threadId
+      ? `${API_URL}/chat/history?threadId=${encodeURIComponent(threadId)}`
+      : `${API_URL}/chat/history`;
+    const res = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) return;
+
+    resetChatContainer();
+
+    conversationHistory = [];
+    messageNodes = [];
+    for (const msg of data.data || []) {
+      const timeLabel = formatHistoryTime(msg.createdAt);
+      if (msg.role === "user") appendUserMessage(msg.content, timeLabel);
+      else appendAIMessage(msg.content, timeLabel);
+      conversationHistory.push({ role: msg.role, content: msg.content });
+    }
+
+    if (!data.data || data.data.length === 0) {
+      appendAIMessage(
+        "Hello, dear friend. I'm Sahanubhuti, and I'm here to listen with care and understanding. How are you feeling today? 🌸"
+      );
+    }
+  } catch {
+    /* ignore history load failures */
+  }
+}
+
+async function loadThreadsAndSelect(preferredThreadId = null) {
+  const token = getToken();
+  if (!token) return;
+
+  try {
+    const res = await fetch(`${API_URL}/chat/threads`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) return;
+
+    threadsCache = data.data || [];
+    renderThreadsList();
+
+    if (threadsCache.length > 0) {
+      const targetId =
+        preferredThreadId && threadsCache.find((t) => t._id === preferredThreadId)
+          ? preferredThreadId
+          : currentThreadId && threadsCache.find((t) => t._id === currentThreadId)
+          ? currentThreadId
+          : threadsCache[0]._id;
+      await selectThread(targetId);
+    } else {
+      await createNewThread();
+    }
+  } catch {
+    /* ignore thread load failures */
+  }
+}
+
+async function createNewThread() {
+  const token = getToken();
+  if (!token) return;
+
+  try {
+    const res = await fetch(`${API_URL}/chat/threads`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ title: "New chat" }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) return;
+
+    threadsCache.unshift(data.data);
+    renderThreadsList();
+    await selectThread(data.data._id);
+  } catch {
+    /* ignore create failures */
+  }
+}
+
+async function selectThread(threadId) {
+  currentThreadId = threadId;
+  renderThreadsList();
+  await loadChatHistory(threadId);
 }
 
 /* ══════════════════════════════════════
@@ -323,10 +426,12 @@ function initChatInput() {
   sendBtn.addEventListener("click", () => {
     const text = input.value.trim();
     if (!text) return;
-    sendMessage(text);
+    const source = lastInputSource;
+    sendMessage(text, false, source);
     input.value = "";
     input.style.height = "auto";
     updateSendBtn();
+    lastInputSource = "text";
   });
 
   input.addEventListener("keydown", (e) => {
@@ -339,10 +444,21 @@ function initChatInput() {
   input.addEventListener("input", () => {
     autoResizeTextarea();
     updateSendBtn();
+    lastInputSource = "text";
   });
 
   updateSendBtn();
 }
+
+// Threads sidebar actions
+document.addEventListener("DOMContentLoaded", () => {
+  const newChatBtn = document.getElementById("newChatBtn");
+  if (newChatBtn) {
+    newChatBtn.addEventListener("click", () => {
+      createNewThread();
+    });
+  }
+});
 
 function updateSendBtn() {
   const input = document.getElementById("chatInput");
@@ -356,6 +472,138 @@ function autoResizeTextarea() {
   if (!input) return;
   input.style.height = "auto";
   input.style.height = Math.min(input.scrollHeight, 120) + "px";
+}
+
+/* ══════════════════════════════════════
+   VOICE → TEXT (Web Speech API)
+   ══════════════════════════════════════ */
+
+function initVoiceToText() {
+  const input = document.getElementById("chatInput");
+  const voiceBtn = document.getElementById("voiceBtn");
+  const statusEl = document.getElementById("voiceStatus");
+  if (!input || !voiceBtn || !statusEl) return;
+
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    voiceBtn.disabled = true;
+    voiceBtn.setAttribute("aria-label", "Voice input not supported");
+    statusEl.textContent = "Voice input isn’t supported in this browser.";
+    return;
+  }
+
+  // Mic + speech APIs are often blocked on file:// or non-secure origins.
+  if (location.protocol === "file:") {
+    statusEl.textContent =
+      "Voice input needs a secure site. Run via Live Server (http://127.0.0.1:5500) or HTTPS.";
+  }
+
+  let recognition = null;
+  let isRecording = false;
+  let baseText = "";
+  let finalTranscript = "";
+
+  const setStatus = (text, listening = false) => {
+    statusEl.textContent = text || "";
+    statusEl.classList.toggle("listening", Boolean(listening));
+  };
+
+  const updateInputValue = (interim = "") => {
+    const glue = baseText && !baseText.endsWith(" ") ? " " : "";
+    const combined = `${baseText}${glue}${finalTranscript}${interim}`.trimStart();
+    input.value = combined;
+    autoResizeTextarea();
+    updateSendBtn();
+  };
+
+  const stopRecognition = () => {
+    if (!recognition) return;
+    try {
+      recognition.stop();
+    } catch {
+      // ignore
+    }
+  };
+
+  const startRecognition = () => {
+    if (isRecording) return;
+
+    // Clear any previous text before a new voice capture
+    input.value = "";
+    baseText = "";
+    finalTranscript = "";
+
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = "en-US";
+
+    recognition.onstart = () => {
+      isRecording = true;
+      voiceBtn.classList.add("recording");
+      voiceBtn.setAttribute("aria-label", "Stop voice input");
+      setStatus("Listening… speak now.", true);
+    };
+
+    recognition.onresult = (event) => {
+      let interim = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const res = event.results[i];
+        const transcript = res[0]?.transcript || "";
+        if (res.isFinal) finalTranscript += transcript;
+        else interim += transcript;
+      }
+      if ((finalTranscript + interim).trim()) {
+        lastInputSource = "voice";
+      }
+      updateInputValue(interim);
+    };
+
+    recognition.onerror = (event) => {
+      // Common: 'not-allowed' when mic permission denied
+      const err = event?.error || "speech_error";
+      if (err === "not-allowed" || err === "service-not-allowed") {
+        setStatus("Microphone permission denied. Please allow mic access.", false);
+      } else if (err === "no-speech") {
+        setStatus("No speech detected. Try again.", false);
+      } else if (err === "audio-capture") {
+        setStatus("No microphone found. Check your audio device.", false);
+      } else {
+        setStatus("Voice input error. Please try again.", false);
+      }
+    };
+
+    recognition.onend = () => {
+      isRecording = false;
+      voiceBtn.classList.remove("recording");
+      voiceBtn.setAttribute("aria-label", "Start voice input");
+
+      // Commit final transcript (without interim)
+      updateInputValue("");
+
+      // If user stopped it intentionally, keep status minimal
+      if (finalTranscript.trim()) setStatus("Voice captured. You can edit and send.", false);
+      else setStatus("", false);
+    };
+
+    try {
+      recognition.start();
+    } catch {
+      setStatus("Couldn’t start voice input. Please try again.", false);
+    }
+  };
+
+  voiceBtn.addEventListener("click", () => {
+    if (isRecording) stopRecognition();
+    else startRecognition();
+  });
+
+  // If the user sends, stop listening to avoid unwanted capture.
+  document.getElementById("sendBtn")?.addEventListener("click", () => {
+    if (isRecording) stopRecognition();
+  });
 }
 
 /* ══════════════════════════════════════
@@ -388,13 +636,14 @@ function getTimestamp() {
  * - If logged in → calls backend Claude AI (multi-turn)
  * - If guest     → uses local response pool as fallback
  */
-async function sendMessage(text, isPrompt = false) {
+async function sendMessage(text, isPrompt = false, source = "text") {
   if (isTyping) return;
 
   appendUserMessage(text);
   showTypingIndicator();
 
   const token = getToken();
+  const shouldSpeak = source === "voice";
 
   if (token) {
     // ── Authenticated: Use Claude AI ──────────────────────────────────────
@@ -407,13 +656,14 @@ async function sendMessage(text, isPrompt = false) {
         },
         body: JSON.stringify({
           message: text,
-          history: conversationHistory, // Send full conversation context
+          threadId: currentThreadId,
         }),
       });
 
       const data = await res.json();
 
       if (res.ok && data.success) {
+        if (data.data?.threadId) currentThreadId = data.data.threadId;
         // Append to history for next turn
         conversationHistory.push({ role: "user", content: text });
         conversationHistory.push({
@@ -428,6 +678,8 @@ async function sendMessage(text, isPrompt = false) {
         hideTypingIndicator();
         appendAIMessage(data.data.botResponse);
         messageCount++;
+        await loadThreadsAndSelect(currentThreadId);
+        if (shouldSpeak) speakText(data.data.botResponse);
         return;
       }
 
@@ -457,6 +709,7 @@ async function sendMessage(text, isPrompt = false) {
     const aiReply = getLocalResponse(text);
     appendAIMessage(aiReply);
     messageCount++;
+    if (shouldSpeak) speakText(aiReply);
   }, delay);
 }
 
@@ -464,7 +717,7 @@ async function sendMessage(text, isPrompt = false) {
    MESSAGE RENDERING
    ══════════════════════════════════════ */
 
-function appendUserMessage(text) {
+function appendUserMessage(text, timeLabel = "") {
   const container = document.getElementById("chatMessages");
   if (!container) return;
 
@@ -473,14 +726,15 @@ function appendUserMessage(text) {
   wrap.innerHTML = `
     <div class="msg-content">
       <div class="msg-bubble">${escapeHTML(text)}</div>
-      <span class="msg-time">${getTimestamp()}</span>
+      <span class="msg-time">${timeLabel || getTimestamp()}</span>
     </div>
   `;
   container.appendChild(wrap);
+  messageNodes.push({ role: "user", content: text, el: wrap, time: timeLabel || getTimestamp() });
   scrollToBottom();
 }
 
-function appendAIMessage(text) {
+function appendAIMessage(text, timeLabel = "") {
   const container = document.getElementById("chatMessages");
   if (!container) return;
 
@@ -497,10 +751,11 @@ function appendAIMessage(text) {
     </div>
     <div class="msg-content">
       <div class="msg-bubble">${formatMessage(text)}</div>
-      <span class="msg-time">${getTimestamp()}</span>
+      <span class="msg-time">${timeLabel || getTimestamp()}</span>
     </div>
   `;
   container.appendChild(wrap);
+  messageNodes.push({ role: "assistant", content: text, el: wrap, time: timeLabel || getTimestamp() });
   scrollToBottom();
 }
 
@@ -517,6 +772,39 @@ function hideTypingIndicator() {
   isTyping = false;
   const indicator = document.getElementById("typingIndicator");
   if (indicator) indicator.classList.remove("visible");
+}
+
+function resetChatContainer() {
+  const container = document.getElementById("chatMessages");
+  if (!container) return;
+  container.innerHTML = "";
+
+  const divider = document.createElement("div");
+  divider.className = "chat-divider";
+  divider.setAttribute("aria-label", "Today");
+  divider.innerHTML = "<span>Today</span>";
+  container.appendChild(divider);
+
+  const typing = document.createElement("div");
+  typing.className = "typing-indicator";
+  typing.id = "typingIndicator";
+  typing.setAttribute("aria-label", "Sahanubhuti is typing");
+  typing.innerHTML = `
+    <div class="msg-avatar" aria-hidden="true">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                 C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+                 c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+    </div>
+    <div class="typing-bubble" aria-hidden="true">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+  `;
+  container.appendChild(typing);
 }
 
 function scrollToBottom() {
@@ -621,5 +909,58 @@ function escapeHTML(str) {
 
 function formatMessage(text) {
   return escapeHTML(text).replace(/\n/g, "<br>");
+}
+
+function speakText(text) {
+  if (!("speechSynthesis" in window)) return;
+  const cleaned = String(text || "")
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!cleaned) return;
+
+  try {
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(cleaned);
+    utter.lang = "en-US";
+    utter.rate = 1;
+    utter.pitch = 1;
+    window.speechSynthesis.speak(utter);
+  } catch {
+    // Ignore speech errors
+  }
+}
+
+function formatHistoryTime(dateValue) {
+  if (!dateValue) return getTimestamp();
+  const d = new Date(dateValue);
+  if (Number.isNaN(d.getTime())) return getTimestamp();
+  return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
+}
+
+function renderThreadsList() {
+  const list = document.getElementById("threadsList");
+  const empty = document.getElementById("threadsEmpty");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  if (!threadsCache || threadsCache.length === 0) {
+    if (empty) list.appendChild(empty);
+    return;
+  }
+
+  threadsCache.forEach((thread) => {
+    const el = document.createElement("div");
+    el.className = "history-item" + (thread._id === currentThreadId ? " active" : "");
+    const title = thread.title || "New chat";
+    const updated = formatHistoryTime(thread.updatedAt);
+    el.innerHTML = `
+      <div class="history-item__text">${escapeHTML(title)}</div>
+      <div class="history-item__meta">Updated · ${updated}</div>
+    `;
+    el.addEventListener("click", () => selectThread(thread._id));
+    list.appendChild(el);
+  });
 }
 
