@@ -3,7 +3,7 @@
    Wired to real backend API
    =================================== */
 
-const API_URL = "http://127.0.0.1:5000/api";
+const API_URL = window.SAHANUBHUTI_CONFIG?.API_URL || "";
 
 /* ══════════════════════════════════════
    AUTH HELPERS
@@ -405,6 +405,16 @@ function initForms() {
 
     setButtonLoading(btn, true);
 
+    if (!API_URL) {
+      setButtonLoading(btn, false);
+      showApiError(
+        "loginPassword",
+        "loginPasswordErr",
+        "Backend URL is not configured for this deployment."
+      );
+      return;
+    }
+
     try {
       const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
@@ -449,6 +459,16 @@ function initForms() {
     const password = document.getElementById("signupPassword").value;
 
     setButtonLoading(btn, true);
+
+    if (!API_URL) {
+      setButtonLoading(btn, false);
+      showApiError(
+        "signupEmail",
+        "signupEmailErr",
+        "Backend URL is not configured for this deployment."
+      );
+      return;
+    }
 
     try {
       const res = await fetch(`${API_URL}/auth/register`, {
@@ -547,4 +567,6 @@ function initPasswordToggles() {
     });
   });
 }
+
+
 
