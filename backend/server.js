@@ -13,13 +13,28 @@ const app = express();
 app.set("trust proxy", 1); // Required for rate limiting behind Render's proxy
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
-const allowedOrigins = (
-  process.env.CLIENT_ORIGIN ||
-  "http://127.0.0.1:3000,http://localhost:3000,http://127.0.0.1:5500,https://akshat-shaw-509.github.io"
-)
-  .split(",")
-  .map((o) => o.trim())
-  .filter(Boolean);
+function normalizeOrigin(value) {
+  const trimmed = value?.trim();
+  if (!trimmed) return null;
+
+  try {
+    return new URL(trimmed).origin;
+  } catch {
+    return trimmed.replace(/\/+$/, "");
+  }
+}
+
+const allowedOrigins = [
+  ...new Set(
+    (
+      process.env.CLIENT_ORIGIN ||
+      "http://127.0.0.1:3000,http://localhost:3000,http://127.0.0.1:5500,https://akshat-shaw-509.github.io"
+    )
+      .split(",")
+      .map(normalizeOrigin)
+      .filter(Boolean)
+  ),
+];
 
 app.use(
   cors({
@@ -75,3 +90,4 @@ app.listen(PORT, () => {
   // Connect to MongoDB after server is already listening
   connectDB();
 });
+

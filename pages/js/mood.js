@@ -6,7 +6,7 @@
    AUTH NAVBAR
    ══════════════════════════════════════ */
 
-const API_URL = "http://127.0.0.1:5000/api";
+const API_URL = window.SAHANUBHUTI_CONFIG?.API_URL || "";
 function getToken() {
   return localStorage.getItem("sahanubhuti_token");
 }
@@ -346,4 +346,5 @@ function setStatVal(id, val) {
   const el = document.getElementById(id);
   if (el) el.textContent = val;
 }
+
 
